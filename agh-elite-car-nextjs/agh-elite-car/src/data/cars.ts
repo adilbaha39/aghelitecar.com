@@ -24,7 +24,7 @@ export const CARS: Car[] = [
     seats: 5,
     price: 330,
     type: "Berline",
-    img: "/images/hyundai-accent.jpg",
+    img: "/images/placeholder-car.svg",
     popular: true,
     description:
       "Berline économique et fiable, idéale pour la ville et les trajets quotidiens à Fès. Confort moderne et consommation maîtrisée.",
@@ -38,7 +38,7 @@ export const CARS: Car[] = [
     seats: 5,
     price: 450,
     type: "SUV",
-    img: "/images/peugeot-2008.jpg",
+    img: "/images/placeholder-car.svg",
     description:
       "SUV compact élégant, parfait pour les familles et les escapades autour de Fès. Habitabilité et style français.",
   },
@@ -51,7 +51,7 @@ export const CARS: Car[] = [
     seats: 5,
     price: 400,
     type: "SUV",
-    img: "/images/dacia-duster.jpg",
+    img: "/images/placeholder-car.svg",
     description:
       "SUV robuste et économique, idéal pour les routes marocaines et les trajets longue distance.",
   },
@@ -65,16 +65,9 @@ export const CARS: Car[] = [
     seats: 5,
     price: 800,
     type: "Berline",
-    img: "/images/bmw-320i.jpg",
+    img: "/images/placeholder-car.svg",
     popular: true,
-    gallery: [
-      "/images/bmw-1.jpg",
-      "/images/bmw-2.jpg",
-      "/images/bmw-3.jpg",
-      "/images/bmw-4.jpg",
-      "/images/bmw-interieur-1.jpg",
-      "/images/bmw-interieur-2.jpg",
-    ],
+    gallery: [],
     description:
       "Berline premium allemande. Plaisir de conduite, finitions luxueuses et performances pour une expérience haut de gamme à Fès.",
   },
@@ -87,7 +80,7 @@ export const CARS: Car[] = [
     seats: 5,
     price: 550,
     type: "SUV",
-    img: "/images/renault-arkana.jpg",
+    img: "/images/placeholder-car.svg",
     description:
       "SUV coupé au design distinctif, alliant élégance et praticité pour vos déplacements à Fès et au-delà.",
   },
@@ -100,7 +93,7 @@ export const CARS: Car[] = [
     seats: 5,
     price: 600,
     type: "SUV",
-    img: "/images/kia-sportage.jpg",
+    img: "/images/placeholder-car.svg",
     description:
       "SUV spacieux et bien équipé, excellent choix pour les familles et les longs trajets en tout confort.",
   },
@@ -113,7 +106,7 @@ export const CARS: Car[] = [
     seats: 5,
     price: 700,
     type: "Berline",
-    img: "/images/golf-8.jpg",
+    img: "/images/placeholder-car.svg",
     description:
       "La référence des compactes. Dynamisme, qualité de fabrication et technologies modernes.",
   },
@@ -126,7 +119,7 @@ export const CARS: Car[] = [
     seats: 5,
     price: 330,
     type: "Berline",
-    img: "/images/hyundai-accent-bleue.jpg",
+    img: "/images/placeholder-car.svg",
     description:
       "Version manuelle économique, parfaite pour un budget maîtrisé sans sacrifier le confort.",
   },

@@ -4,11 +4,13 @@ import { locales, defaultLocale } from "@/i18n/config";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip static files and api
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/images") ||
-    pathname.includes(".") // files like favicon.ico
+    pathname.startsWith("/api") ||
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml" ||
+    pathname.includes(".")
   ) {
     return;
   }
@@ -19,10 +21,9 @@ export function middleware(request: NextRequest) {
 
   if (pathnameHasLocale) return;
 
-  // Redirect to default locale
-  const locale = defaultLocale;
-  request.nextUrl.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
-  return NextResponse.redirect(request.nextUrl);
+  const url = request.nextUrl.clone();
+  url.pathname = `/${defaultLocale}${pathname === "/" ? "" : pathname}`;
+  return NextResponse.redirect(url);
 }
 
 export const config = {

@@ -1,13 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { POSTS, getPostBySlug, getAllSlugs, getLocalizedPost } from "@/data/blog";
+import {
+  POSTS,
+  getPostBySlug,
+  getAllSlugs,
+  getLocalizedPost,
+} from "@/data/blog";
 import { whatsappLink, contactMessage } from "@/lib/whatsapp";
 import { getDictionary } from "@/i18n/get-dictionary";
-import type { Locale } from "@/i18n/config";
-import { locales } from "@/i18n/config";
+import { locales, isLocale, type Locale } from "@/i18n/config";
+import { buildPageMetadata, canonicalUrl } from "@/lib/seo";
+import {
+  blogPostingSchema,
+  breadcrumbSchema,
+  jsonLdScript,
+} from "@/lib/schema";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
+
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   return locales.flatMap((locale) =>
@@ -16,68 +28,63 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale, slug } = await params;
+  const { locale: raw, slug } = await params;
+  if (!isLocale(raw)) return {};
   const post = getPostBySlug(slug);
   if (!post) return { title: "Not found" };
-  const loc = getLocalizedPost(post, locale);
-  return {
+  const loc = getLocalizedPost(post, raw);
+  return buildPageMetadata({
+    locale: raw,
     title: loc.title,
-    description: loc.excerpt,
-    keywords: post.keywords,
-    alternates: {
-      canonical: `https://aghelitecar.ma/${locale}/blog/${slug}`,
-      languages: Object.fromEntries(
-        locales.map((l) => [l, `https://aghelitecar.ma/${l}/blog/${slug}`])
-      ),
-    },
-    openGraph: {
-      title: loc.title,
-      description: loc.excerpt,
-      type: "article",
-      publishedTime: post.date,
-      locale: locale === "ar" ? "ar_MA" : locale === "en" ? "en_US" : "fr_MA",
-    },
-  };
+    description: loc.excerpt.slice(0, 160),
+    path: `/blog/${slug}`,
+    ogType: "article",
+  });
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const { locale, slug } = await params;
+  const { locale: raw, slug } = await params;
+  if (!isLocale(raw)) notFound();
+  const locale = raw as Locale;
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
   const loc = getLocalizedPost(post, locale);
-  const dict = await getDictionary(locale as Locale);
+  const dict = await getDictionary(locale);
   const t = dict.blog;
-  const dateLocale = locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR";
+  const dateLocale =
+    locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR";
 
   const paragraphs = loc.content.trim().split("\n\n").filter((p) => p.trim());
 
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: loc.title,
-    description: loc.excerpt,
-    datePublished: post.date,
-    author: { "@type": "Organization", name: "AGH Elite Car" },
-    publisher: {
-      "@type": "Organization",
-      name: "AGH Elite Car",
-      url: "https://aghelitecar.ma",
-    },
-    mainEntityOfPage: `https://aghelitecar.ma/${locale}/blog/${slug}`,
-    keywords: post.keywords.join(", "),
-    inLanguage: locale,
-  };
+  const schemas = [
+    blogPostingSchema({
+      locale,
+      slug,
+      title: loc.title,
+      description: loc.excerpt,
+      datePublished: post.date,
+      keywords: post.keywords,
+    }),
+    breadcrumbSchema([
+      { name: dict.nav.home, url: canonicalUrl(locale, "") },
+      { name: dict.nav.blog, url: canonicalUrl(locale, "/blog") },
+      {
+        name: loc.title,
+        url: canonicalUrl(locale, `/blog/${slug}`),
+      },
+    ]),
+  ];
 
   return (
     <div className="pt-[84px]">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(schemas) }}
       />
       <article className="bg-white">
         <div className="max-w-[800px] mx-auto px-6 py-12 md:py-16">
-          <nav className="text-sm text-[#6b6b6b] mb-8">
+          <nav className="text-sm text-[#6b6b6b] mb-8" aria-label="Breadcrumb">
             <Link href={`/${locale}`} className="hover:text-[#b8893a]">
               {dict.nav.home}
             </Link>
@@ -109,7 +116,7 @@ export default async function BlogPostPage({ params }: Props) {
             <p className="text-lg text-[#6b6b6b] leading-relaxed">{loc.excerpt}</p>
           </header>
 
-          <div className="space-y-5 text-[#1a1a1a] leading-relaxed">
+          <div className="space-y-5 leading-relaxed">
             {paragraphs.map((block, i) => {
               const trimmed = block.trim();
               if (trimmed.startsWith("## ")) {
@@ -126,7 +133,7 @@ export default async function BlogPostPage({ params }: Props) {
                   </h3>
                 );
               }
-              if (trimmed.startsWith("- ") || trimmed.startsWith("1. ")) {
+              if (trimmed.startsWith("- ") || /^\d+\. /.test(trimmed)) {
                 const items = trimmed.split("\n").filter((l) => l.trim());
                 return (
                   <ul key={i} className="list-disc pl-5 space-y-2 my-4">
@@ -164,7 +171,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
 
           <div className="mt-14 p-6 bg-[#faf7f1] rounded-2xl border border-[#e8dfcc] text-center">
-            <h3 className="font-serif text-xl mb-2">{t.ctaTitle}</h3>
+            <h2 className="font-serif text-xl mb-2">{t.ctaTitle}</h2>
             <p className="text-sm text-[#6b6b6b] mb-5">{t.ctaText}</p>
             <div className="flex flex-wrap justify-center gap-3">
               <a
@@ -185,7 +192,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
 
           <div className="mt-12 pt-8 border-t border-[#e8dfcc]">
-            <h3 className="font-serif text-lg mb-4">{t.other}</h3>
+            <h2 className="font-serif text-lg mb-4">{t.other}</h2>
             <ul className="space-y-3">
               {POSTS.filter((p) => p.slug !== post.slug).map((p) => {
                 const other = getLocalizedPost(p, locale);
@@ -214,11 +221,16 @@ function renderTable(md: string): string {
   let html = '<table class="w-full border-collapse text-left">';
   lines.forEach((line, idx) => {
     if (line.includes("---")) return;
-    const cells = line.split("|").map((c) => c.trim()).filter(Boolean);
+    const cells = line
+      .split("|")
+      .map((c) => c.trim())
+      .filter(Boolean);
     const tag = idx === 0 ? "th" : "td";
     html += "<tr>";
     cells.forEach((cell) => {
-      html += `<${tag} class="border border-[#e8dfcc] px-3 py-2 ${idx === 0 ? "bg-[#faf7f1] font-medium" : ""}">${cell}</${tag}>`;
+      html += `<${tag} class="border border-[#e8dfcc] px-3 py-2 ${
+        idx === 0 ? "bg-[#faf7f1] font-medium" : ""
+      }">${cell}</${tag}>`;
     });
     html += "</tr>";
   });

@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { isLocale } from "@/i18n/config";
+import { buildPageMetadata } from "@/lib/seo";
+import { notFound } from "next/navigation";
 import { whatsappLink, contactMessage } from "@/lib/whatsapp";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
@@ -6,24 +9,21 @@ import type { Locale } from "@/i18n/config";
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  const dict = await getDictionary(locale as Locale);
-  return {
+  const { locale: raw } = await params;
+  if (!isLocale(raw)) return {};
+  const dict = await getDictionary(raw);
+  return buildPageMetadata({
+    locale: raw,
     title: dict.meta.aboutTitle,
     description: dict.meta.aboutDesc,
-    alternates: {
-      canonical: `https://aghelitecar.ma/${locale}/apropos`,
-      languages: {
-        fr: "https://aghelitecar.ma/fr/apropos",
-        en: "https://aghelitecar.ma/en/apropos",
-        ar: "https://aghelitecar.ma/ar/apropos",
-      },
-    },
-  };
+    path: "/apropos",
+  });
 }
 
 export default async function AproposPage({ params }: Props) {
-  const { locale } = await params;
+  const { locale: raw } = await params;
+  if (!isLocale(raw)) notFound();
+  const locale = raw;
   const dict = await getDictionary(locale as Locale);
   const t = dict.about;
 

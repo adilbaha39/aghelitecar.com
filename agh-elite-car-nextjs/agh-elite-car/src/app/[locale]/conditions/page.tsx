@@ -1,28 +1,28 @@
 import type { Metadata } from "next";
+import { isLocale } from "@/i18n/config";
+import { buildPageMetadata } from "@/lib/seo";
+import { notFound } from "next/navigation";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  const dict = await getDictionary(locale as Locale);
-  return {
+  const { locale: raw } = await params;
+  if (!isLocale(raw)) return {};
+  const dict = await getDictionary(raw);
+  return buildPageMetadata({
+    locale: raw,
     title: dict.meta.conditionsTitle,
     description: dict.meta.conditionsDesc,
-    alternates: {
-      canonical: `https://aghelitecar.ma/${locale}/conditions`,
-      languages: {
-        fr: "https://aghelitecar.ma/fr/conditions",
-        en: "https://aghelitecar.ma/en/conditions",
-        ar: "https://aghelitecar.ma/ar/conditions",
-      },
-    },
-  };
+    path: "/conditions",
+  });
 }
 
 export default async function ConditionsPage({ params }: Props) {
-  const { locale } = await params;
+  const { locale: raw } = await params;
+  if (!isLocale(raw)) notFound();
+  const locale = raw;
   const dict = await getDictionary(locale as Locale);
   const t = dict.conditions;
   const sections = (t as { sections?: { title: string; items: string[] }[] }).sections || [];

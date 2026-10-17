@@ -3,24 +3,23 @@ import Link from "next/link";
 import { POSTS, getLocalizedPost } from "@/data/blog";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { isLocale } from "@/i18n/config";
+import { buildPageMetadata, canonicalUrl } from "@/lib/seo";
+import { breadcrumbSchema, jsonLdScript } from "@/lib/schema";
+import { notFound } from "next/navigation";
 
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  const dict = await getDictionary(locale as Locale);
-  return {
+  const { locale: raw } = await params;
+  if (!isLocale(raw)) return {};
+  const dict = await getDictionary(raw);
+  return buildPageMetadata({
+    locale: raw,
     title: dict.meta.blogTitle,
     description: dict.meta.blogDesc,
-    alternates: {
-      canonical: `https://aghelitecar.ma/${locale}/blog`,
-      languages: {
-        fr: "https://aghelitecar.ma/fr/blog",
-        en: "https://aghelitecar.ma/en/blog",
-        ar: "https://aghelitecar.ma/ar/blog",
-      },
-    },
-  };
+    path: "/blog",
+  });
 }
 
 export default async function BlogPage({ params }: Props) {

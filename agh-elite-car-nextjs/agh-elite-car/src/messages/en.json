@@ -9,8 +9,8 @@
     "reserve": "Book on WhatsApp"
   },
   "home": {
-    "title": "Premium car",
-    "titleHighlight": "rental",
+    "title": "Car Rental in Fez",
+    "titleHighlight": "premium vehicles",
     "subtitle": "Your comfort is our priority.",
     "chip1": "Recent cars",
     "chip2": "Reliable service",
@@ -21,7 +21,15 @@
     "seeAll": "See full fleet",
     "ctaTitle": "Ready to hit the road?",
     "ctaText": "Contact us on WhatsApp for a quick reservation and personalized service in French, Arabic or English.",
-    "ctaBtn": "Chat on WhatsApp"
+    "ctaBtn": "Chat on WhatsApp",
+    "seoSectionTitle": "Car rental in Fez with AGH Elite Car",
+    "seoSectionText": "AGH Elite Car is your car rental agency in Fez. We offer economy sedans, SUVs and premium vehicles for city trips, excursions or Fez-Saïs airport pickup on request. Fast WhatsApp booking, service 7 days a week from 8am to 10pm, in French, Arabic or English.",
+    "seoBenefit1": "Recent fleet: sedans, SUVs and luxury",
+    "seoBenefit2": "From 330 MAD/day",
+    "seoBenefit3": "WhatsApp booking in minutes",
+    "seoBenefit4": "Local service in Fez, 7 days a week",
+    "seoCtaFleet": "See available cars",
+    "seoCtaContact": "Contact us"
   },
   "fleet": {
     "eyebrow": "OUR FLEET",
@@ -46,7 +54,8 @@
     "vehiclesPlural": "vehicles",
     "empty": "No vehicles match your criteria.",
     "popular": "Popular",
-    "perDay": "/day"
+    "perDay": "/day",
+    "intro": "Browse our Fez fleet: automatic and manual cars, SUVs and sedans. Prices from 330 MAD/day. Book via WhatsApp."
   },
   "car": {
     "reserve": "Book this car",
@@ -172,17 +181,17 @@
     "tagline": "Car rental in Fez, Morocco"
   },
   "meta": {
-    "homeTitle": "AGH Elite Car – Premium car rental in Fez",
-    "homeDesc": "AGH Elite Car, premium car rental in Fez. BMW, Peugeot, Hyundai, Dacia... Book easily on WhatsApp. Service 7 days a week.",
-    "fleetTitle": "Our Fleet",
-    "fleetDesc": "Discover our premium vehicle fleet in Fez: BMW, Peugeot, Hyundai, Dacia, Kia and more. From 330 MAD/day.",
-    "aboutTitle": "About",
-    "aboutDesc": "AGH Elite Car, premium car rental agency in Fez: comfort, elegance and safety.",
-    "conditionsTitle": "Rental conditions",
-    "conditionsDesc": "AGH Elite Car rental conditions: required documents, minimum age, insurance, deposit, fuel and cancellation.",
-    "contactTitle": "Contact",
-    "contactDesc": "Contact AGH Elite Car in Fez: phone, WhatsApp, email and address. Support 7 days a week, 8am–10pm.",
-    "blogTitle": "Blog – Car rental tips in Fez",
-    "blogDesc": "Guides and tips for renting a car in Fez: airport, prices, sedan vs SUV, required documents."
+    "homeTitle": "Car Rental in Fez | AGH Elite Car",
+    "homeDesc": "Rent a car in Fez with AGH Elite Car. Sedans, SUVs and premium cars from 330 MAD/day. Fast WhatsApp booking, service 7 days a week.",
+    "fleetTitle": "Car rental fleet in Fez",
+    "fleetDesc": "Sedans, SUVs and luxury cars in Fez from 330 MAD/day. Automatic or manual. Book with AGH Elite Car on WhatsApp.",
+    "aboutTitle": "Car rental agency in Fez",
+    "aboutDesc": "AGH Elite Car, local agency in Fez: recent cars, service in French, Arabic and English, WhatsApp booking 7 days a week.",
+    "conditionsTitle": "Car rental conditions in Fez",
+    "conditionsDesc": "Documents, minimum age, insurance, deposit and cancellation at AGH Elite Car in Fez. Clear terms before you rent.",
+    "contactTitle": "Contact – Car rental Fez",
+    "contactDesc": "Contact AGH Elite Car in Fez: +212 6 64 44 31 73, WhatsApp, 32 Rue de Cologne. Open 7 days a week, 8am–10pm.",
+    "blogTitle": "Fez car rental blog – Tips & guides",
+    "blogDesc": "Practical guides: Fez airport car rental, prices, automatic cars, SUVs and tips to rent in Fez."
   }
 }

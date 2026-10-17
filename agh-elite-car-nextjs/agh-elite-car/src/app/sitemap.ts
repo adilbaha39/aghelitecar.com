@@ -2,24 +2,36 @@ import type { MetadataRoute } from "next";
 import { CARS } from "@/data/cars";
 import { POSTS } from "@/data/blog";
 import { locales } from "@/i18n/config";
+import { SITE_URL } from "@/lib/seo";
 
-const BASE = "https://aghelitecar.ma";
+const SITE_UPDATED = "2026-10-15";
 
-const staticPaths = ["", "/flotte", "/apropos", "/conditions", "/contact", "/blog"];
+const staticPaths: {
+  path: string;
+  changeFrequency: "weekly" | "monthly";
+  priority: number;
+}[] = [
+  { path: "", changeFrequency: "weekly", priority: 1 },
+  { path: "/flotte", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/apropos", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/conditions", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/contact", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/blog", changeFrequency: "weekly", priority: 0.8 },
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
 
   for (const locale of locales) {
-    for (const path of staticPaths) {
+    for (const page of staticPaths) {
       entries.push({
-        url: `${BASE}/${locale}${path}`,
-        lastModified: new Date(),
-        changeFrequency: path === "" || path === "/flotte" || path === "/blog" ? "weekly" : "monthly",
-        priority: path === "" ? 1 : path === "/flotte" ? 0.9 : 0.7,
+        url: `${SITE_URL}/${locale}${page.path}`,
+        lastModified: SITE_UPDATED,
+        changeFrequency: page.changeFrequency,
+        priority: page.priority,
         alternates: {
           languages: Object.fromEntries(
-            locales.map((l) => [l, `${BASE}/${l}${path}`])
+            locales.map((l) => [l, `${SITE_URL}/${l}${page.path}`])
           ),
         },
       });
@@ -27,13 +39,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     for (const car of CARS) {
       entries.push({
-        url: `${BASE}/${locale}/voiture/${car.id}`,
-        lastModified: new Date(),
+        url: `${SITE_URL}/${locale}/voiture/${car.id}`,
+        lastModified: SITE_UPDATED,
         changeFrequency: "weekly",
         priority: 0.8,
         alternates: {
           languages: Object.fromEntries(
-            locales.map((l) => [l, `${BASE}/${l}/voiture/${car.id}`])
+            locales.map((l) => [l, `${SITE_URL}/${l}/voiture/${car.id}`])
           ),
         },
       });
@@ -41,13 +53,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     for (const post of POSTS) {
       entries.push({
-        url: `${BASE}/${locale}/blog/${post.slug}`,
-        lastModified: new Date(post.date),
+        url: `${SITE_URL}/${locale}/blog/${post.slug}`,
+        lastModified: post.date,
         changeFrequency: "monthly",
         priority: 0.7,
         alternates: {
           languages: Object.fromEntries(
-            locales.map((l) => [l, `${BASE}/${l}/blog/${post.slug}`])
+            locales.map((l) => [l, `${SITE_URL}/${l}/blog/${post.slug}`])
           ),
         },
       });

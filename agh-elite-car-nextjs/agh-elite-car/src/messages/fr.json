@@ -9,7 +9,7 @@
     "reserve": "Réserver sur WhatsApp"
   },
   "home": {
-    "title": "Location de voitures",
+    "title": "Location de voitures à Fès",
     "titleHighlight": "haut de gamme",
     "subtitle": "Votre confort, notre priorité.",
     "chip1": "Voitures récentes",
@@ -21,7 +21,15 @@
     "seeAll": "Voir toute la flotte",
     "ctaTitle": "Prêt à prendre la route ?",
     "ctaText": "Contactez-nous sur WhatsApp pour une réservation rapide et un service personnalisé en français, arabe ou anglais.",
-    "ctaBtn": "Discuter sur WhatsApp"
+    "ctaBtn": "Discuter sur WhatsApp",
+    "seoSectionTitle": "Location de voiture à Fès avec AGH Elite Car",
+    "seoSectionText": "AGH Elite Car est votre agence de location de voitures à Fès. Nous proposons des berlines économiques, des SUV et des véhicules premium pour vos déplacements en ville, vos excursions ou une prise en charge à l'aéroport Fès-Saïs sur demande. Réservation rapide par WhatsApp, service 7 jours sur 7 de 8h à 22h, en français, arabe ou anglais.",
+    "seoBenefit1": "Flotte récente : berlines, SUV et luxe",
+    "seoBenefit2": "À partir de 330 DH/jour",
+    "seoBenefit3": "Réservation WhatsApp en quelques minutes",
+    "seoBenefit4": "Service local à Fès, 7j/7",
+    "seoCtaFleet": "Voir les voitures disponibles",
+    "seoCtaContact": "Nous contacter"
   },
   "fleet": {
     "eyebrow": "NOTRE FLOTTE",
@@ -46,7 +54,8 @@
     "vehiclesPlural": "véhicules",
     "empty": "Aucun véhicule ne correspond à vos critères.",
     "popular": "Populaire",
-    "perDay": "/jour"
+    "perDay": "/jour",
+    "intro": "Découvrez notre flotte à Fès : voitures automatiques et manuelles, SUV et berlines. Prix à partir de 330 DH/jour. Réservez en ligne via WhatsApp."
   },
   "car": {
     "reserve": "Réserver cette voiture",
@@ -172,17 +181,17 @@
     "tagline": "Location de voitures à Fès, Maroc"
   },
   "meta": {
-    "homeTitle": "AGH Elite Car – Location de voitures haut de gamme à Fès",
-    "homeDesc": "AGH Elite Car, location de voitures haut de gamme à Fès. BMW, Peugeot, Hyundai, Dacia... Réservez facilement sur WhatsApp. Service 7j/7.",
-    "fleetTitle": "Notre flotte",
-    "fleetDesc": "Découvrez notre flotte de véhicules haut de gamme à Fès : BMW, Peugeot, Hyundai, Dacia, Kia et plus. Prix à partir de 330 DH/jour.",
-    "aboutTitle": "À propos",
-    "aboutDesc": "AGH Elite Car, agence de location de voitures haut de gamme à Fès : confort, élégance et sécurité.",
-    "conditionsTitle": "Conditions de location",
-    "conditionsDesc": "Conditions de location AGH Elite Car : documents requis, âge minimum, assurance, caution, carburant et annulation.",
-    "contactTitle": "Contact",
-    "contactDesc": "Contactez AGH Elite Car à Fès : téléphone, WhatsApp, email et adresse. Assistance 7j/7 de 8h à 22h.",
-    "blogTitle": "Blog – Conseils location voiture à Fès",
-    "blogDesc": "Guides et conseils pour louer une voiture à Fès : aéroport, prix, berline vs SUV, documents nécessaires."
+    "homeTitle": "Location de voiture à Fès | AGH Elite Car",
+    "homeDesc": "Louez une voiture à Fès avec AGH Elite Car. Berlines, SUV et voitures premium dès 330 DH/jour. Réservation WhatsApp, service 7j/7.",
+    "fleetTitle": "Flotte de voitures à louer à Fès",
+    "fleetDesc": "Berlines, SUV et voitures luxe à Fès dès 330 DH/jour. Automatique ou manuelle. Réservez avec AGH Elite Car sur WhatsApp.",
+    "aboutTitle": "Agence de location de voiture à Fès",
+    "aboutDesc": "AGH Elite Car, agence locale à Fès : voitures récentes, service en français, arabe et anglais, réservation WhatsApp 7j/7.",
+    "conditionsTitle": "Conditions de location de voiture à Fès",
+    "conditionsDesc": "Documents, âge minimum, assurance, caution et annulation chez AGH Elite Car à Fès. Conditions claires avant de louer.",
+    "contactTitle": "Contact – Location voiture Fès",
+    "contactDesc": "Contactez AGH Elite Car à Fès : +212 6 64 44 31 73, WhatsApp, 32 Rue de Cologne. Ouvert 7j/7 de 8h à 22h.",
+    "blogTitle": "Blog location voiture Fès – Conseils",
+    "blogDesc": "Guides pratiques : location voiture aéroport Fès, prix, automatique, SUV et conseils pour bien louer à Fès."
   }
 }

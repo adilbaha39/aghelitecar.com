@@ -3,89 +3,100 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { CARS, getCarById } from "@/data/cars";
 import { whatsappLink, reserveCarMessage } from "@/lib/whatsapp";
+import { locales, isLocale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
+import { buildPageMetadata, canonicalUrl } from "@/lib/seo";
+import { breadcrumbSchema, productSchema, jsonLdScript } from "@/lib/schema";
 
 type Props = { params: Promise<{ locale: string; id: string }> };
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
-  const { locales } = await import("@/i18n/config");
-  return locales.flatMap((locale) => CARS.map((c) => ({ locale, id: c.id })));
+  return locales.flatMap((locale) =>
+    CARS.map((c) => ({ locale, id: c.id }))
+  );
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale, id } = await params;
+  const { locale: raw, id } = await params;
+  if (!isLocale(raw)) return {};
   const car = getCarById(id);
-  if (!car) return { title: "Véhicule introuvable" };
+  if (!car) return { title: "Not found" };
   const title = car.title || car.name;
-  return {
-    title: `${title} ${car.year} – Location à Fès`,
-    description: `Louez la ${title} ${car.year} à Fès avec AGH Elite Car. À partir de ${car.price} DH/jour. Réservation sur WhatsApp.`,
-    alternates: {
-      canonical: `https://aghelitecar.ma/${locale}/voiture/${id}`,
-    },
-    openGraph: {
-      title: `${title} ${car.year} | AGH Elite Car`,
-      description: car.description,
-    },
-  };
+  const pageTitle =
+    raw === "ar"
+      ? `كراء ${title} ${car.year} في فاس`
+      : raw === "en"
+        ? `Rent ${title} ${car.year} in Fez`
+        : `Location ${title} ${car.year} à Fès`;
+  const description =
+    car.description ||
+    `${title} ${car.year} – ${car.price} MAD/day – AGH Elite Car Fès`;
+  return buildPageMetadata({
+    locale: raw,
+    title: pageTitle,
+    description: description.slice(0, 160),
+    path: `/voiture/${id}`,
+  });
 }
 
 export default async function VoiturePage({ params }: Props) {
-  const { locale, id } = await params;
+  const { locale: raw, id } = await params;
+  if (!isLocale(raw)) notFound();
+  const locale = raw;
   const car = getCarById(id);
   if (!car) notFound();
 
+  const dict = await getDictionary(locale);
   const title = car.title || car.name;
   const waMsg = reserveCarMessage(title, car.year, car.price);
+  const description = car.description || `${title} ${car.year}`;
 
-  const productJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: `${title} ${car.year}`,
-    description: car.description,
-    brand: {
-      "@type": "Brand",
-      name: car.name.split(" ")[0],
-    },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "MAD",
-      price: car.price,
-      priceValidUntil: "2026-12-31",
-      availability: "https://schema.org/InStock",
-      url: `https://aghelitecar.ma/${locale}/voiture/${car.id}`,
-    },
-  };
+  const schemas = [
+    productSchema(car, locale, description),
+    breadcrumbSchema([
+      { name: dict.nav.home, url: canonicalUrl(locale, "") },
+      { name: dict.nav.fleet, url: canonicalUrl(locale, "/flotte") },
+      {
+        name: `${title} ${car.year}`,
+        url: canonicalUrl(locale, `/voiture/${id}`),
+      },
+    ]),
+  ];
+
+  const imgSrc = car.img || "/images/placeholder-car.svg";
 
   return (
     <div className="pt-[84px]">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(schemas) }}
       />
       <section className="bg-white">
         <div className="max-w-[1180px] mx-auto px-6 py-10 md:py-14">
-          <nav className="text-sm text-[#6b6b6b] mb-6">
+          <nav className="text-sm text-[#6b6b6b] mb-6" aria-label="Breadcrumb">
             <Link href={`/${locale}`} className="hover:text-[#b8893a]">
-              Accueil
+              {dict.nav.home}
             </Link>
             <span className="mx-2">/</span>
             <Link href={`/${locale}/flotte`} className="hover:text-[#b8893a]">
-              Flotte
+              {dict.nav.fleet}
             </Link>
             <span className="mx-2">/</span>
             <span className="text-[#1a1a1a]">{title}</span>
           </nav>
 
           <div className="grid md:grid-cols-2 gap-10 items-start">
-            <div>
-              <div className="aspect-[4/3] rounded-2xl bg-[#f5f0e6] overflow-hidden border border-[#e8dfcc]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={car.img}
-                  alt={`${title} ${car.year}`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            <div className="aspect-[4/3] rounded-2xl bg-[#f5f0e6] overflow-hidden border border-[#e8dfcc]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imgSrc}
+                alt={`${title} ${car.year} – location Fès`}
+                width={800}
+                height={600}
+                className="w-full h-full object-cover"
+              />
             </div>
 
             <div>
@@ -98,41 +109,38 @@ export default async function VoiturePage({ params }: Props) {
                   {car.year}
                 </span>
               </h1>
-              <p className="text-[#6b6b6b] mb-6 leading-relaxed">
-                {car.description}
-              </p>
+              <p className="text-[#6b6b6b] mb-6 leading-relaxed">{description}</p>
 
               <div className="flex flex-wrap gap-4 mb-8">
-                <Spec label="Transmission" value={car.trans} />
-                <Spec label="Carburant" value={car.fuel} />
-                <Spec label="Places" value={`${car.seats}`} />
+                <Spec label={dict.car.trans} value={car.trans} />
+                <Spec label={dict.car.fuel} value={car.fuel} />
+                <Spec label={dict.car.seats} value={`${car.seats}`} />
               </div>
 
               <div className="bg-[#faf7f1] rounded-2xl p-6 border border-[#e8dfcc] mb-6">
-                <div className="flex items-end justify-between mb-4">
-                  <div>
-                    <p className="text-sm text-[#6b6b6b]">Prix par jour</p>
-                    <p className="text-3xl font-semibold text-[#8f6a25]">
-                      {car.price}{" "}
-                      <span className="text-base font-normal">DH</span>
-                    </p>
-                  </div>
-                </div>
+                <p className="text-sm text-[#6b6b6b]">{dict.car.perDay}</p>
+                <p className="text-3xl font-semibold text-[#8f6a25] mb-4">
+                  {car.price} <span className="text-base font-normal">DH</span>
+                </p>
                 <a
                   href={whatsappLink(waMsg)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-3 bg-gradient-to-br from-[#e9cf94] to-[#c9993f] text-[#2a1e07] rounded-full px-6 py-3.5 font-semibold hover:-translate-y-0.5 transition-transform shadow-md"
                 >
-                  <WhatsAppIcon className="w-5 h-5" />
-                  Réserver cette voiture
+                  {dict.car.reserve}
                 </a>
               </div>
 
-              <p className="text-xs text-[#6b6b6b]">
-                Réservation instantanée via WhatsApp • Réponse sous 15 min •
-                Assistance 7j/7
-              </p>
+              <p className="text-xs text-[#6b6b6b] mb-4">{dict.car.note}</p>
+              <div className="flex flex-wrap gap-3 text-sm">
+                <Link href={`/${locale}/flotte`} className="text-[#8f6a25] hover:text-[#b8893a]">
+                  ← {dict.nav.fleet}
+                </Link>
+                <Link href={`/${locale}/contact`} className="text-[#8f6a25] hover:text-[#b8893a]">
+                  {dict.nav.contact}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -147,13 +155,5 @@ function Spec({ label, value }: { label: string; value: string }) {
       <p className="text-xs text-[#6b6b6b]">{label}</p>
       <p className="font-medium">{value}</p>
     </div>
-  );
-}
-
-function WhatsAppIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-    </svg>
   );
 }

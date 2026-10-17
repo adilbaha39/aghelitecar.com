@@ -1,34 +1,44 @@
 import type { Metadata } from "next";
 import { CONTACT, whatsappLink, contactMessage } from "@/lib/whatsapp";
 import { getDictionary } from "@/i18n/get-dictionary";
-import type { Locale } from "@/i18n/config";
+import { isLocale } from "@/i18n/config";
+import { buildPageMetadata, canonicalUrl } from "@/lib/seo";
+import { breadcrumbSchema, jsonLdScript } from "@/lib/schema";
+import ContactForm from "@/components/ContactForm";
+import { notFound } from "next/navigation";
 
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  const dict = await getDictionary(locale as Locale);
-  return {
+  const { locale: raw } = await params;
+  if (!isLocale(raw)) return {};
+  const dict = await getDictionary(raw);
+  return buildPageMetadata({
+    locale: raw,
     title: dict.meta.contactTitle,
     description: dict.meta.contactDesc,
-    alternates: {
-      canonical: `https://aghelitecar.ma/${locale}/contact`,
-      languages: {
-        fr: "https://aghelitecar.ma/fr/contact",
-        en: "https://aghelitecar.ma/en/contact",
-        ar: "https://aghelitecar.ma/ar/contact",
-      },
-    },
-  };
+    path: "/contact",
+  });
 }
 
 export default async function ContactPage({ params }: Props) {
-  const { locale } = await params;
-  const dict = await getDictionary(locale as Locale);
+  const { locale: raw } = await params;
+  if (!isLocale(raw)) notFound();
+  const locale = raw;
+  const dict = await getDictionary(locale);
   const t = dict.contact;
+
+  const crumbs = breadcrumbSchema([
+    { name: dict.nav.home, url: canonicalUrl(locale, "") },
+    { name: dict.nav.contact, url: canonicalUrl(locale, "/contact") },
+  ]);
 
   return (
     <div className="pt-[84px]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(crumbs) }}
+      />
       <section className="bg-white py-12 md:py-16">
         <div className="max-w-[1180px] mx-auto px-6">
           <p className="text-xs tracking-[0.15em] text-[#b8893a] mb-3">{t.eyebrow}</p>
@@ -37,11 +47,11 @@ export default async function ContactPage({ params }: Props) {
             <em className="block text-[#b8893a] not-italic">{t.titleHighlight}</em>
           </h1>
           <p className="text-[#6b6b6b] mt-4 max-w-xl">{t.subtitle}</p>
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#444] mt-6">
-            <span>{t.chip1}</span>
-            <span>{t.chip2}</span>
-            <span>{t.chip3}</span>
-          </div>
+          <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#444] mt-6 list-none">
+            <li>{t.chip1}</li>
+            <li>{t.chip2}</li>
+            <li>{t.chip3}</li>
+          </ul>
         </div>
       </section>
 
@@ -57,6 +67,7 @@ export default async function ContactPage({ params }: Props) {
                   <a href={`tel:${CONTACT.phoneRaw}`} className="text-[#6b6b6b] hover:text-[#b8893a]">
                     {CONTACT.phone}
                   </a>
+                  <p className="text-xs text-[#6b6b6b]">WhatsApp</p>
                 </li>
                 <li>
                   <p className="font-medium">{t.address}</p>
@@ -78,25 +89,17 @@ export default async function ContactPage({ params }: Props) {
             <div className="bg-white rounded-2xl border border-[#e8dfcc] p-6">
               <h2 className="font-serif text-xl mb-1">{t.formTitle}</h2>
               <p className="text-sm text-[#6b6b6b] mb-6">{t.formSub}</p>
-              <div className="space-y-4">
-                <input type="text" placeholder={t.name} className="w-full rounded-xl border border-[#e8dfcc] px-4 py-3 text-sm bg-[#faf7f1] focus:outline-none focus:border-[#b8893a]" />
-                <input type="tel" placeholder={t.phonePlaceholder} className="w-full rounded-xl border border-[#e8dfcc] px-4 py-3 text-sm bg-[#faf7f1] focus:outline-none focus:border-[#b8893a]" />
-                <textarea placeholder={t.message} rows={4} className="w-full rounded-xl border border-[#e8dfcc] px-4 py-3 text-sm bg-[#faf7f1] focus:outline-none focus:border-[#b8893a] resize-none" />
-                <a
-                  href={whatsappLink(contactMessage())}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-br from-[#e9cf94] to-[#c9993f] text-[#2a1e07] rounded-full px-6 py-3 font-semibold text-sm"
-                >
-                  {t.sendWa} →
-                </a>
-              </div>
+              <ContactForm
+                labels={{
+                  name: t.name,
+                  phone: t.phonePlaceholder,
+                  message: t.message,
+                  submit: t.sendWa,
+                }}
+              />
             </div>
 
             <div className="bg-white rounded-2xl border border-[#e8dfcc] p-6 flex flex-col items-center text-center">
-              <div className="w-16 h-16 rounded-full bg-[#25D366]/10 flex items-center justify-center text-[#25D366] text-2xl mb-4">
-                WA
-              </div>
               <h2 className="font-serif text-xl mb-2">{t.waTitle}</h2>
               <p className="text-sm text-[#6b6b6b] mb-6">{t.waText}</p>
               <a

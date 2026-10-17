@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect fill="#f5f0e6" width="800" height="600"/>
+  <g fill="none" stroke="#b8893a" stroke-width="3" opacity="0.5">
+    <path d="M160 380h480l40-80H520l-40-80H320l-40 80H120z"/>
+    <circle cx="260" cy="380" r="36"/>
+    <circle cx="540" cy="380" r="36"/>
+  </g>
+  <text x="400" y="480" text-anchor="middle" fill="#8f6a25" font-family="system-ui,sans-serif" font-size="22">AGH Elite Car</text>
+</svg>

@@ -52,6 +52,7 @@ export default function Header({ locale, dict }: Props) {
         </Link>
 
         <nav
+          id="main-nav"
           className={`${
             open
               ? "flex flex-col absolute top-[84px] left-0 right-0 bg-white border-b border-[#e8dfcc] p-6 gap-4 shadow-lg"
@@ -118,6 +119,8 @@ export default function Header({ locale, dict }: Props) {
             className="md:hidden text-2xl text-[#1a1a1a]"
             onClick={() => setOpen(!open)}
             aria-label="Menu"
+            aria-expanded={open}
+            aria-controls="main-nav"
           >
             {open ? "✕" : "☰"}
           </button>
